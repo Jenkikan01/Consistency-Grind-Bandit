@@ -1,0 +1,106 @@
+Date: November 22, 2026.
+
+Notes Learning Notes (Observations):
+
+Temporary Directory created by mktemp -d is deleted on system reboot (/tmp)
+
+	Here are the difference:
+		/tmp (Short Term) = On modern distributions like Ubuntu, Debian and Fedora
+			/tmp is mounted as tmps (in RAM) or wiped by startup scripts whenever
+			the system reboots.
+			systemd-tmpfiles also periodically deletes files inside /tmp that havent
+				accessed for 10 days
+		
+		/var/tmp (Persistent) = This directory is stored on your disk and is not deleted
+			when you reboot. Instead, systemd-tmpfiles automatically cleans up files
+			in /var/tmp that havent accessed for 30 days
+
+	Questions:
+		So is /tmp located or stored in ram while /var/tmp is stored on disk?
+			/tmp is stored in ram while /var/tmp is stored in Physical Disk (SSD/HDD)
+			/var/tmp is meant for larger temporary files
+				or  data that programs need to survive a reboot (interrupted downloads
+				or editor recovery files)
+			
+		What is tmpfs?
+			Temporary File System
+			Virtual FileSystem in the computer located in RAM (and swap space if ram is full)
+			Benefits: Much faster than reading/writing to a disk, reduces wear on SSDs
+				and guarantees automatic clean up upon reboot
+
+		Give me an example of startup scripts are they customed scripts?
+			They are built-in system scripts/services
+				Modern systems (systemd): Uses a built in service called systemd-tmpfiles-setup.service
+					During boot, it reads configuration files and rund an equivalent of rm -rf /tmp/*
+					(if /tmp wasnt already wiped by being in RAM) and recreates system folders
+
+				Older systems (SysVinit): Used built in shell scripts like /etc/init.d/bootmisc.sh or /etc/rc.local that
+					rab find /tmp -mindepth 1 -delete during boot sequence
+ 
+		what is systemd-tmpfiles? you mentioned them being one of the causers in tmp then
+			in this case is after reboot is the /tmp is still around?
+				systemd-tmpfiles is a built-in Linux background service that creates, cleans up and remove temporary files
+					and directories.
+			Events in Reboot sequencing:
+				Contents inside /tmp are completely wiped out either through RAM or boot system scripts deleted
+				them.
+				The /tmp directory itself is immediately recreated with the proper permissions (1777) so programs can use it again
+				If computer stays powered on for weeks without rebooting, a timer (systemd-tmpfile-clean.timer) runs
+					systemd-tmpfiles daily to delete stale files inside /tmp so RAM wont fill up
+
+		So is systemd-tmpfiles also affects /var/tmp not just /tmp? What are their
+			differences? 
+				The main difference is the default age limit and reboot survivability:
+					/tmp = 10 days without access (if computer is turned on for a long time) and doesnt survive reboots
+					/var/tmp = 30 days without access and doesnt survive reboot
+
+		Syntaxes to create the two:
+			/tmp directory:
+				mktemp -d
+
+			/var/tmp directory:
+				sudo mkdir -p /var/tm && sudo chmod 1777 /var/tmp
+
+
+Notes for Bandit Level 17 to Level 18:
+
+	Problem: There are two files in the home directory. The password is in the passwords.new and is the only line that has been
+		changed between passwords.old and password.new. So we can conclude here that the file are identical to each other
+		and the password is the changes that happened between the two.
+
+	Solution: 
+		The said changes can be extracted by using the diff command.
+			diff ./passwords.new passwords.old or interchangeably
+		
+		The said changes can also use the following commands (The following are syntax and what they do):
+			
+			diff --minimal --color=always ./password.old ./password.new
+			diff --minimal --color=always ./password.new ./password.old
+			diff --color=always ./password.old ./password.new
+			diff -d --color=always ./password.old ./password.new
+
+		The core command is the following:
+			diff ./path/to/file ./path/to/file
+
+			Dissecting the file:
+				1st position is the command which in this case is the: diff
+				2nd position is the path to file of the first file
+				3rd position is the path to file of the second file to be compared with the other file
+
+			-d or --minimal flag is used to do a more narrower analysis in terms of finding the smallest set of changes in the file
+				it uses much more computing power compared to standard usage of the command
+
+			--color=always flag is used to colour the output of the commands
+
+	Observations derived from my mistakes:
+		Command: ssh user@host -p portnumber -i ./non/existing/file/or/directory
+		Error: Warning: Identity file ./non/existing/file/or/directory not accessible: No such file or directory
+		Solution: Make sure that the file or directory that you are feeding does exist
+
+		Command: ssh user@wrong.hostname -p portnumber -i ./correct/file/path/
+		Error: ssh: Could not resolve hostname wrong.hostname: Name or service not known
+		Solution:  Make sure that the hostname is correct in format and is existing
+		
+		Command: dif -d --color=always ./path/to/file ./path/to/file
+		Error: Command '-dif' not found, did you mean:
+		Solution: Wrong command use, Fix the typo instead of dif use diff
