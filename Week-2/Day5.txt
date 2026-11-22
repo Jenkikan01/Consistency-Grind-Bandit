@@ -1,0 +1,85 @@
+Date: November 19, 2026.
+
+Name: Bandit Consistency Bandit Level 16
+Objective:
+	To
+Notes:
+	Network Server = Service
+	Specific Port/Port = Address
+	Network Server Listening to them:
+		Service/Network Server is actively waiting on a specific port or address to receive incoming connection
+		requests from those clients/devices
+	So a port is a way for a device to establish a connection/connect to a server by acting as a doorway
+ 
+	Netstat = is used inside the machine/server to find all ports currently listening on that computer
+		  Thus showing active connections that are open
+	Nmap = is used from the outside to knock on a server's ports across a network to knock on a servers port 
+		- It tells which doors are open (Listening)
+		- It tells what specific software is behind each door
+		- Tells whether a firewall is blocking them
+	Handshake = establishing a connection
+
+	openssl s_client is identical to nc (netcat)
+		The difference: nc sends the messages in an unencrypted manner while openssl s_client wraps the
+			data and information in encryption in SSL/TSL automatically
+		In other words it is a netcat but with built in encryption
+
+	openssl s_client use cases:
+		Talking to encrypted servers manually = opens a text connection to a server and encrypts in TLS/SSL
+			encryption
+		Inspecting SSL/TLS certificates = used in checking websites security certificate expiry, issuer and
+			encryption versions the server supports
+		Debugging secure connections = if an app or website is failing to connect securely, openssl s_client is
+			used to pinpoint the exact handshake details and pinpoint the encryption failure
+
+	So openssl s_client sets up an encrypted session between the server and my machine, and closes when EOF is reached (like pressing Ctrl + D, or right after echo finishes feeding the password).
+	In default mode (without -quiet or -ign_eof), openssl inspects the very first character of each line before sending anything, and intercepts these hotkeys instead of passing my text to the server:
+		Q = Ends/closes the session completely (DONE).
+		R = Refreshes/renegotiates the entire SSL handshake from scratch without hanging up (RENEGOTIATING — TLS 1.2 and below).
+		k = Swaps only my outgoing encryption key to a fresh one without hanging up (KEYUPDATE — TLS 1.3).
+		K = Swaps my outgoing key AND forces the server to swap its key too, keeping the session open (KEYUPDATE — TLS 1.3).
+		Because R, k, and K keep the session alive while swallowing the line to run those TLS updates,
+			you could keep sending passwords that start with them over and over without 
+			disconnecting—and the server would never actually receive the password until you add -quiet.
+		
+Observations:
+
+	I used netstat -l and it showed me all open connections/listening connections/open ports including the ones that are
+	can be find that are included in the challenge which are the following:
+		port 31960
+		port 31691
+		port 31046
+
+
+	Mistakes:
+		nmap -p 31000 32000 = No target hosts specified thats why it failed
+		nmap -p gibson-0 31000 32000 = so basically here is it doesnt follow the correct order of the syntax
+		nmap -p 31000, 32000 = So here is there is no host/target specified and it cannot pinpoint the other target which is 32000
+		nmap -p 31000, 32000 gibson-0 = So here is only 31000 is scanned and it cannot pinpoint the 32000
+		nmap -p 31000,32000 gibson-0 = This is a correct command tho the mistake is it only scans 31000 and 32000 not the range of those ports
+
+	The correct command:
+		nmap -p 31000-32000 gibson-0
+		Result of the command:
+			31046
+			31518
+			31691
+			31790
+			31960
+
+	Then use the following commands:
+		echo "password" | openssl s_client -connect gibson-0:31046 -server hostname -quiet
+		echo "password" | openssl s_client -connect gibson-0:31518 -server hostname -quiet
+		echo "password" | openssl s_client -connect gibson-0:31691 -server hostname -quiet
+		echo "password" | openssl s_client -connect gibson-0:31790 -server hostname -quiet
+		echo "password" | openssl s_client -connect gibson-0:31960 -server hostname -quiet
+
+	Some of it will just reply back the password and only one will give the certificate
+	Copy the certificate and from Beginning down to the EoF
+	Paste it into the file locally
+	After that is set the following to the file:
+		chmod 400 file.txt
+		chmod 600 file.txt
+
+	Then use it to ssh the file by using the following command:
+		ssh user@host -p portnumber -i ./file.txt

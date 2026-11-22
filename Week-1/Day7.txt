@@ -1,0 +1,40 @@
+Date: November 14, 2026.
+
+Notes for Bandit 12 - Bandit 13
+
+What confused me:
+
+    What confused me earlier is Im confused as to which method Ill be using
+	which is between copying into a temporary directory or moving the file
+	into the temporary directory
+	Here are my errors:
+		cp data.txt /tmp.3OvhtLddyt/
+		cp: cannot create regular file '/tmp.3OvhtLddyt/': Not a directory
+		cp ./data.txt /tmp.3OvhtLddyt/
+		cp: cannot create regular file '/tmp.3OvhtLddyt/': Not a directory
+		data.txt /tmp.30vhtLddyt
+		mv: cannot move 'data.txt' to '/tmp.30vhtLddyt': Permission denied
+
+	The correct method was to copy the file via the following syntax (Which copy and paste the file into the temporary directory):
+		cp ./data.txt /tmp/tmp.3OvhtLddyt
+
+
+    Heres the solution:
+	Since we have a hexdump file is we need to revert it back into its binary form in order to do the decryption process
+	So we use the following:
+	    xxd -r data.txt
+	Then after that is apply the following rules:
+	if its a gzip compressed file when it comes to the findings of file is do the following:
+		1. change the file extension into .gz
+		2. after changing the file extension is we decrypt by using the following:
+		3. gzip -d file.gz
+	then check the file type using file
+	if its a bzip2 compressed file when it comes to the findings of the file is do the following:
+		1. change the file extension into .bz2
+                2. after changing the file extension is we decrypt by using the following:
+                3. bzip2 -d file.bz2
+	then check the file type using file
+	if its a tar file is we need to extract the file by using the following:
+		1. tar xf file
+	then check and repeat the process above until you get the file to say ASCII file and if it does then its the password already.
+

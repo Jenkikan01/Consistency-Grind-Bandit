@@ -1,0 +1,18 @@
+Date: November 13, 2026.
+
+Notes for Bandit Lvl 11 - 12
+
+What confused me:
+
+    What confused me is the way on how to use the syntax of tr command.
+    The syntax I used was tr 'A-Za-z' 'N-ZA-Mn-za-m' <<< data.txt
+    Which in return is instead of decrypting the contents is it decrypts the file name instead by using that.
+
+Solution:
+
+    The correct syntax usage of tr is:
+    tr < ./data.txt 'A-Za-z' 'N-ZA-Mn-za-m'
+    Through the usage of this command is that instead of decrypting/encrypting the filename is it decrypts
+    or encrypts the file contents instead.
+
+

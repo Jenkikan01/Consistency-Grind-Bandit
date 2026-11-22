@@ -1,0 +1,22 @@
+November 9, 2026
+
+Bandit Level 5 to 6:
+
+Where did I go wrong and got confused?
+
+	I was confused on the part of syntax placement
+		The syntax used (Mistake):
+			find -size 1033c ./inhere
+
+	I was also confused on a bit of whether find can locate the human readability and executability of the file
+
+The correct syntax of locating the file in this case:
+
+	Correct syntax:
+		find ./inhere -size 1033c
+		file ./inhere/maybehere07/.file2 && ls -l ./inhere/maybehere07/.file2
+		cat file ./inhere/maybehere07/.file2
+
+	Explaination and correction:
+		The directory should be placed before the flags and specification so that the machine can know where to look first
+

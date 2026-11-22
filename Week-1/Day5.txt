@@ -1,0 +1,26 @@
+Date: November 12, 2026.
+
+Goal: The password is inside a text files in one of the few ASCII strings preceded by "=" characters
+
+Problem: The file has garbled text inside for it was a binary
+
+What I learened: 
+    We need to strip out the binary data first from the ASCII strings and then locate the lines with "="
+using grep so that we can pinpoint out the goal password here.
+
+My mistake:
+
+strings -d data.txt | grep "="
+
+Why it is a mistake:
+I added -d in the syntax and -d is only useful if the file has lable folder like an .exe file which 
+separates its contents into labled folders like Code and Data. And because of that its useless since
+the file is just a bunch of messy pile of raw data
+
+The correct solution:
+
+strings data.txt | grep "="
+
+Since all we need to do is extract human readable file to find the lines that contain "=" via grep is
+we need to atleast use strings to extract those from the messy file.
+

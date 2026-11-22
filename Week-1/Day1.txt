@@ -1,0 +1,21 @@
+November 8, 2026
+
+Bandit Consistency Notes
+Bandit Lvl 4 to 5
+
+The goal is to find the only humsn readable (ASCII) file here in the inhere directory.
+
+	What confused me and what did I do during confuusion?
+		I thought that the command find can do the job so I used find in doing the syntax 
+		    but I was wrong... The wrong syntaxes that I used was:
+			- find ./inhere/*
+			- find -la ./inhere/*
+
+	The solution to find the only Human Readable File was:
+		file ./inhere/*
+
+	Why this is the solution
+		By using the file instead is we can see the file types of the said files in a directory
+		And since the goal in this problem is to find the only readable file which is the ASCII
+		By using file is we can see what file types are the following files thus revealing which is the correct file.
+

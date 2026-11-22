@@ -1,0 +1,31 @@
+Date: November 10, 2026.
+
+Notes in Bandit Consistency Levels
+
+Notes for Bandit Level 6 to Level 7:
+
+What confused me:
+	I got confused on the part where flags are involved.
+	I forgot what flags belongs to group and user on the find command.
+
+What I did:
+	I check out the man pages and found out the following:
+	the flags for find command are the following:
+	    -group = owned by groups
+	    -user = owned by user
+	    -size = for the size of the file
+
+Mistakes:
+	I used only the following syntax:
+	    find / -user bandit7 -group bandit6 -size 33c
+	The mistake in here is errors will be included in the output 
+
+Solution:
+	2>/dev/null shall be included in the end... so it would be like this:
+	find / -user bandit7 -group bandit6 -size 33c 2>/dev/null
+
+	2>/dev/null is used to filter out the errors and find what we really are looking for
+	
+	Then read the contents/password by using the following:
+	cat /var/lib/dpkg/info/bandit7.password
+

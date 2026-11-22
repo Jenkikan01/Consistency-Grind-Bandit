@@ -1,0 +1,15 @@
+Date: November 11, 2026.
+
+Bandit Lvl 8 to 9 Notes:
+
+What problems I encountered:
+	I forgot the syntax in how to find the uniq lines and needed confirmation regarding that
+
+The solution for this level:
+	sort filename.txt | uniq -u
+
+Explaination:
+	The key here is uniq -u command but the thing here is that this can only work on sorted out lines which means
+if there are multiple lines inside a file and has many duplicates that are scrambled is it wont be able to detect the
+uniq line inside of it cuz it only works on a sorted content.... Thats why we need to sort the contents of the file
+first.

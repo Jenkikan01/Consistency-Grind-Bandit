@@ -1,0 +1,18 @@
+Date: November 16, 2026.
+
+Notes for Bandit Level 14 - 15
+
+Goal: send the password of the current level to port 30000 on local host
+
+So basically the correct syntax should be:
+
+	echo 'aaWecNkG4FhxJQxz07uiwzVP6bJiYS65' | nc gibson-0 30000
+
+What does this do is it feeds the password directly to the local host via pipe and nc without needing to create a new file inside the directory.
+
+What confused me are the following:
+	I used an ssh style of syntax which is the following:
+		echo 'aaWecNkG4FhxJQxz07uiwzVP6bJiYS65' | nc bandit14@bandit.labs.overthewire.org -l -p 30000
+		This was a mistake because nc couldnt understand the formatting because this syntax only belonged to ssh
+		In this also is i misused the flags... The challenge wants to send the password to an existing service which is the local host not an incoming connection (-l)
+		Also I used the syntax on my local machine but the challenge requires me to do it in the remote machine

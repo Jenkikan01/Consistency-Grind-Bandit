@@ -1,0 +1,26 @@
+Date: November 15, 2026.
+
+Notes for Bandlit Level 13 to Level 14:
+
+The problem in this level is that the target file isnt on the level 13
+The target file is located and can be read only by user bandit 14
+However there is an sshkey file in the user bandit13
+This sshkey file can be used in logging in to level 14 by feeding this via ssh outside the users and through my local machine
+
+Solution:
+What I did was copy the file content of the file of the file located in user bandit13 and paste it into a file inside my local machine
+after copying is I did assigned the following permissions for the said file:
+	chmod go-w 
+	chmod 700
+	chmod 600
+I assigned those permissions so that it wont be considered as too open by OpenSSH standards so that it wont get a permission denied error
+
+then after assigning those permissions is I feed it to the bandit14 to login to it via ssh:
+	ssh bandit14@bandit.labs.overthewire.org -p 2220 -i path/to/directory
+
+After feeding it is Ill be able to get the said target file content by reading /etc/bandit_pass/bandit14 via the cat command
+
+What confused me:
+	I thought /etc/bandit_pass/bandit14 was a directory
+What I learned:
+	That path was a file path

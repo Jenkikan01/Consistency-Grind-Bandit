@@ -1,0 +1,19 @@
+Date: November 17, 2026
+
+Notes for Bandit Level 15 - 16
+
+Objective was submit the password on the localhost on port 30001 using TLS encryption.
+
+What confused me/ What are my mistakes:
+
+	Syntax mistakes:
+		openssl s_client -crlf \ connect gibson-0:30001
+	Confusion:
+		I didnt put a flag into the connect and servername 
+		Flags = "-"
+
+The solution:
+
+	openssl s_client -crlf -connect gibson-0:30001 -servername gibson-0
+	Then feed the password into it (The level 15 password the one used when logging in)
+
