@@ -1,0 +1,73 @@
+
+Date: November 23, 2026.
+
+Learning Notes (Observations):
+
+	Problem: The password for the next level is stored in a file located in the home directory.
+		But someone has modified .bashrc to log you out when you log in via SSH.
+
+	Questions:
+		What is .bashrc?
+			It is a hidden configuration script in the home directory (~/.bashrc) that Bash shell runs automatically every time you open a new interactive, non-login shell.
+
+	What it does:
+	- Aliases: Creates short nicknames for long commands (e.g., alias ll='ls -la')
+	- Environment Variables: Set or modify paths like PATH or application variables (JAVA_HOME)
+	- Shell Functions: Write custom mini-scripts or helpers that you can run straight from the command line.
+	- Prompt Customization: Change the look, color, or information displayed in your command prompt (such as showing Git branch names).
+
+	Where it is located:
+	- User-specific: ~/.bashrc (in your local user home directory)
+	- System-wide (Debian/Ubuntu): /etc/bash.bashrc (applies defaults to all users)
+
+	What to use to make changes:
+	- nvim ~/.bashrc or nano ~/.bashrc
+	- Add custom code or aliases and save the file
+	- Apply the changes without restarting via:
+	source ~/.bashrc
+
+	What is SSH?
+	    SSH is a program for logging into a remote machine and executing commands on it.
+	    It is intended to provide secure encrypted communications between two untrusted hosts over an insecure network.
+
+	What is Home Directory?
+	    The personal folder assigned to a specific user account on an operating system to store private files, documents, and application settings.
+	    It serves as the starting working directory when a user logs into a terminal or a session.
+	    The home folder is sometimes called User Profile Directory or User Folder (common in Windows), or login directory (used in Unix/Linux contexts).
+
+		Common Uses:
+		- Personal files: storing documents, downloads, media, and projects separate from core system files
+		- App Configuration: holding user-specific preferences, caches, and login scripts
+		- Command Line Navigation: via `cd` in Linux
+
+Notes for Bandit Level 18 - 19:
+
+	The situation for this level is basically every time you log in to the remote machine via SSH, 
+		the machine automatically logs you out right away because someone has configured the .bashrc.
+		 So what we need to do is integrate our command for reading the file into the command for logging into the remote machine via SSH. 
+		We will be using the following command from our local machine:
+
+	bash
+	    ssh user@host -p portnumber "commandsyntax ./path/to/target/file"
+
+
+For this level, that would look like:
+
+	bash
+	    ssh bandit18@bandit.labs.overthewire.org -p 2220 "cat readme"
+
+
+	What will happen in this scenario is that once you enter this command, it will ask you for the password of the target machine. 
+		Once you enter the password, the remote command will be executed in a non-interactive shell. 
+		Non-interactive shells do not read ~/.bashrc by default, so the logout command inside .bashrc is never triggered.
+		 That lets you get what you’re trying to get—such as the contents of a file from the home directory—without starting the interactive shell that would log you out.
+
+Command Breakdown:
+
+	ssh = command used, which means Secure Shell	
+	user = username inside the remote machine
+	host = the target machine
+	-p = flag that specifies the port number to connect to on the remote machine
+	portnumber = the port number used by the remote machine’s SSH service
+	"commandsyntax ./path/to/target/file" = the command you’re trying to execute on the remote machine;
+		 this must come after the SSH options and destination, and quoting is recommended so your local shell does not interpret special characters.
