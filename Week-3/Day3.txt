@@ -1,0 +1,33 @@
+Date: November 24, 2026.
+Networking Notes.
+
+What I learned on this date are the following:
+
+	- The meaning of URL is Uniform Resource Locator 
+		- It is an standardized address that is used to locate a specific resource in the network/internet
+	- An Example of URL is: 
+		 https://youtu.be/URR7yQayl1Q?si=AkDvGSWHYhaXiN0v
+	- The said example can be broken into three parts:
+		https = Hypertext Transfer Protocol Secure and this is the protocol used to download the said resource or page
+			More Secure than http alone.
+		youtu.be = This is the host or the machine or the server that serves the page/ or the machine that provides you the service
+				/URR7yQayl1Q?si=AkDvGSWHYhaXiN0v = this is the unique identifier of the said resource or file or can be inferred as the specific
+				resource path or it behaves like a specific filepath or directory pointing out to that specific file
+
+
+	By clicking a URL the following happens:
+		6 messages to translate the servername into its Internet Protocol (IP Address)
+			youtu.be --------> public IP Address
+		
+		3 messages to setup a Transmission Control Protocol (TCP) between the browser and the web server.
+
+		4 messages for your browser to send HTTP "GET" request and the server to respond with the requested page (And for each side to acknowledge the receipt of that message). 
+
+		4 messages to tear down the TCP connection.
+
+
+	Or we can think of URL as the following:
+
+		https ----> Mode of entry (ruleset).
+		youtu.be ----> Building (Server where information is stored).
+		URR7yQayl1Q?si=AkDvGSWHYhaXiN0v ----> room where the actual item or service lives.
