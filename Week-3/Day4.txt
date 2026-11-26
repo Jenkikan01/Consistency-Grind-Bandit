@@ -1,0 +1,133 @@
+Date: November 25, 2026.
+
+Bandit Lvl 19-20 Notes:
+
+The Goal: To obtain the password for the next level.
+
+The Problem: The Bandit 20 password can only be accessed by the bandit20 user; for any
+    other user, it is not accessible because the file does not have permissions granted
+    to others.
+
+The Given Data: According to the problem, there is a setuid binary executable located in
+    the home directory that can be used to grant us special permissions for the file owned
+    by bandit20, which will enable us to access it. The password, according to the problem,
+    is located at /etc/bandit_pass.
+
+The syntaxes, errors I have incurred, and the syntaxes that caused them, as well as anything
+    that appears in the command line:
+
+Equivalent Command: cat /etc/bandit_pass/bandit20
+    cat: bandit20: Permission denied
+Explanation:
+    This error occurred because of how permissions work and what permissions the file has.
+    As shown below, the permissions of the said file — which is owned by the bandit20 user —
+    include only read permission for the owner (the "r" in the owner's permission slot).
+    The group and others do not have any permission. Therefore, in this case, we cannot
+    access the target file because, in this problem, we are only the bandit19 user and not
+    the bandit20 user.
+
+    Commands used and the corresponding results:
+        file /etc/bandit_pass/bandit20
+            bandit20: regular file, no read permission
+        ls -l /etc/bandit_pass/bandit20
+            -r---------- 1 bandit20 bandit20 33 Oct 25 13:36 bandit20
+
+Equivalent Command: bandit20-do %s cat /etc/bandit_pass/bandit20
+    bandit20-do: command not found
+Explanation:
+    bandit20-do itself is not a command because it is a setuid binary executable; that is why
+    when we run it that way, we get that error. In short, the way we used the syntax was
+    incorrect, which makes it a wrong syntax / incorrect command.
+
+Equivalent Command: %s cat /etc/bandit_pass/bandit20
+    -bash: fg: %s: no such job
+Explanation:
+    Error Breakdown:
+        -bash: - indicates that the error came directly from your Bash shell (the hyphen means it is a login shell).
+        fg:    - refers to the foreground command, which brings a stopped or background process back to your active screen.
+        foreground simply means an active task, process, or interface element that currently has the user's or
+            processor's immediate focus and priority.
+
+        Examples of foreground:
+            - Active Application / Window: The program or window currently open on screen and receiving direct
+                user input (such as typing or clicking).
+            - High-Priority Processing: A level of computer processing where the CPU responds right away to
+                input or a designated high-priority task, contrasted with background tasks that run quietly without
+                direct user interaction.
+            - Visual / UI Layer: The top or visible interface.
+
+        %s:    - Represents the job identifier you typed (in Bash, % followed by text tells the shell to search for
+            a running job whose command starts with that letter or string, such as "s").
+
+        Further Breakdown:
+            % (The Foreground Trigger) = The % sign at the beginning of a command is a built-in shortcut for
+                fg (foreground). The computer secretly changed the command into
+                fg %s cat /etc/bandit_pass/bandit20.
+
+            s (The missing program name) = Because s was attached to the %, the terminal assumed you were asking
+                for a paused background program whose name starts with "s".
+
+            cat /etc/bandit_pass/bandit20 (The ignored command) = The fg shortcut only looks for paused programs
+                and does not know how to read files. Once %s failed, the computer quit immediately and never
+                looked at cat or your file path.
+
+            To piece it together:
+                We used %s at the beginning of our command, and it replaced our command with
+                fg %s cat /etc/bandit_pass/bandit20. Thus, it looked for a paused program with "s" as
+                the beginning of the program's name. It did not find any, so it terminated the command
+                and ignored the cat command.
+
+            fg = a command used to unfreeze (resume) a paused foreground process (paused via Ctrl+Z) or to resume
+                a paused program. It also works on background jobs that are running, so we can pull them back
+                to the foreground to watch or stop them.
+
+        no such job - means Bash checked its active job list for that session and found nothing matching %s.
+
+Equivalent Command: ./bandit20-do
+    Run a command as another user.
+    Example: ./bandit20-do whoami
+Explanation: This means that the setuid binary executable ran, and it also tells the user (us) how to use such
+    an executable.
+
+Equivalent Command: file bandit20-do
+    bandit20-do: setuid ELF 32-bit LSB executable, Intel i386, version 1 (SYSV), dynamically linked,
+                 interpreter /lib/ld-linux.so.2, BuildID[sha1]=263f71465a75a599f568ae40f1caca2a9e937892,
+                 for GNU/Linux 3.2.0, not stripped
+Explanation:
+    ELF 32-bit LSB executable:
+        ELF (Executable and Linkable Format) is the standard file format for compiled programs on Linux.
+        It means that it is a binary program you can run directly rather than a text file or script.
+
+    setuid:
+        The most important security detail. It means "Set User ID," a special flag on the executable that
+        changes how Linux runs it.
+
+        A special file permission that lets a user run a program with the identity and privileges of the
+        file's owner rather than their own.
+
+        Setuid execution (with -rwsr-x---). The s in the owner's permission slot (rws) tells Linux to
+        temporarily switch the program's Effective User ID (EUID) to match the file's owner (bandit20).
+        While bandit20-do is running, the system treats it as if bandit20 launched it.
+
+    Intel i386... dynamically linked... not stripped:
+        These are standard technical details about the processor architecture it was compiled for and how it
+        connects to the system libraries.
+
+    What is a Binary Program?
+        A computer program that has been translated from human-readable code into machine code — a raw
+        sequence of 1s and 0s that a computer's processor (CPU) can execute directly.
+
+Equivalent Command: ls -l ./bandit20-do
+    -rswr-x--- 1 bandit20 bandit19 14880 Oct 25 13:37 bandit20-do
+
+The correct syntax that gets you access to the target file owned by bandit20:
+    ./bandit20-do cat /etc/bandit_pass/bandit20
+Explanation:
+    Execution of the executable. Since this is a setuid binary executable, it allows us to run commands as
+    the bandit20 user rather than the bandit19 user.
+
+Other Notes:
+    /etc directory = system files, owned by the root user (system administrator).
+        It prevents regular users from configuring such files under this directory.
+        Regular users can only access their own files and those files that grant regular users permission to
+        access them.
